@@ -257,9 +257,9 @@ We welcome contributions to make mining more sustainable!
 
 ---
 
-## 👥 Team — XEN!TH
+## 👥 Team — @XEN!TH
 
-- **Vishal Kumar** — Lead Developer (AI & Data Pipeline)
+- **Vishal Kumar** — Lead Developer 
 - **Shivani Sharma** — Team Lead
 - **Aditya Goyal**
 - **Akshat Kumar Arya**
@@ -273,4 +273,4 @@ We welcome contributions to make mining more sustainable!
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-Made with ❤️ for **Smart India Hackathon 2025**
+Made with ❤️ by team **@XEN!TH**
