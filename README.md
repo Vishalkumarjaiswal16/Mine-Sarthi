@@ -254,7 +254,6 @@ This will start:
 - 🔄 **Digital Twin** — Visual process flow simulation for operational planning.
 - 📊 **Energy Usage Analytics** — Granular breakdown of consumption by equipment.
 - ☀️ **Renewable Integration** — Dashboard for solar and battery storage management.
-- ⚠️ **Smart Alerting** — Threshold-based notifications for machine health.
 - 🛡️ **Safety Interlocks** — Logic-based overrides to prevent unsafe machine states.
 
 ---
