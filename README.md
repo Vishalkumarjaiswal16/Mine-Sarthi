@@ -148,7 +148,7 @@ mining/crusher_01/speed_setpoint
 
 ## 🎓 What You Will Learn
 
-- ✅ Architecting **Industrial IoT (IIoT)** pipelines for high-frequency data
+- ✅ Architecting **Industrial IoT** pipelines for high-frequency data
 - ✅ Implementing **sequential AI workflows** (Classification → Regression)
 - ✅ Building **production-grade bridges** between different protocols (MQTT & HTTP)
 - ✅ Working with **hybrid database strategies** (Time-series + Relational)
@@ -164,7 +164,6 @@ mining/crusher_01/speed_setpoint
 - A **bidirectional data pipeline** handling thousands of metrics per second
 - An **AI-powered speed control service** that operates autonomously
 - A **React-based command center** with real-time analytics and alerts
-- A **Dockerized microservices architecture** ready for cloud deployment
 
 ---
 
@@ -285,7 +284,7 @@ We welcome contributions to make mining more sustainable!
 
 ## 👥 Team — @XEN!TH
 
-- **Vishal Kumar** — Lead Developer 
+- **Vishal Kumar** 
 - **Shivani Sharma** — Team Lead
 - **Aditya Goyal**
 - **Akshat Kumar Arya**
