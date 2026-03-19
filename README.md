@@ -1,4 +1,8 @@
-# ⛏️ Mine Sarthi — The Charioteer of Sustainable Mining
+<p align="center">
+  <img src="images/mine_sarthi_logo.png" alt="Mine Sarthi Logo" width="150"/>
+</p>
+
+# Mine Sarthi — The Charioteer of Sustainable Mining
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
@@ -13,7 +17,7 @@
 > A comprehensive, **AI-powered industrial IoT ecosystem** designed to optimize energy usage in iron ore mining comminution (crushing and grinding) operations. Built for the **Smart India Hackathon (SIH) 2025** (**PS ID: 25210**), Mine Sarthi transforms traditional mining workflows into intelligent, autonomous, and sustainable operations.
 
 <p align="center">
-  <img src="images/Screenshot-2026-03-19-181353.jpg" alt="Mine Sarthi AI Monitoring Dashboard" width="800"/>
+  <img src="images/Screenshot 2026-03-19 181353.png" alt="Mine Sarthi AI Monitoring Dashboard" width="800"/>
 </p>
 
 ---
@@ -44,17 +48,36 @@
 ## 🎯 Problem Statement
 
 ### SIH Problem Statement ID: **25210**
-**Title:** Efficient Energy Use in Iron Ore Mining Operations
 
-**Background:**
-In mining operations, the processes of **crushing and grinding** (collectively known as **comminution**) are essential for liberating valuable minerals from the surrounding rock. However, these processes are among the **most energy-intensive stages** in mineral processing, often accounting for up to **50% of a mine's total energy consumption**. The inefficiencies in these systems not only lead to **elevated operational costs** but also contribute significantly to the **environmental footprint** of mining activities.
+**Problem Statement Title:** Efficient Energy use in Iron Ore Mining Operations
 
-**The Challenge:**
+**Theme:** Miscellaneous | **PS Category:** Software | **Team ID:** 97177 | **Team Name:** XEN!TH
+
+---
+
+#### Background
+
+In mining operations, the processes of **crushing and grinding** — collectively known as **comminution** — are essential for liberating valuable minerals from the surrounding rock. However, these processes are among the **most energy-intensive stages** in mineral processing, often accounting for up to **50% of a mine's total energy consumption**. The inefficiencies in these systems not only lead to **elevated operational costs** but also contribute significantly to the **environmental footprint** of mining activities.
+
+#### Description
+
 Traditional crushing and grinding equipment often operate under **suboptimal conditions** due to static control systems, wear and tear, and lack of real-time adaptability. This results in:
+
 - ⚠️ **Excessive energy usage**
 - 📉 **Reduced throughput**
 - 💰 **Increased maintenance costs**
 - 🌍 **Higher carbon emissions**
+
+#### Expected Solutions
+
+**a) AI-Controlled Optimization Systems:**
+
+1. **Real-Time Monitoring & Control:** Implement AI-driven systems that continuously monitor variables such as ore hardness, feed size, moisture content, and equipment load.
+2. **Predictive Maintenance:** Use machine learning models to predict wear patterns and schedule maintenance proactively, reducing downtime and energy waste.
+3. **Dynamic Process Adjustment:** AI algorithms can adjust operational parameters (e.g., crusher speed, grinding media size, mill rotation speed) in real time to maintain optimal energy efficiency.
+4. **Integration with IoT Sensors:** Deploy smart sensors to collect high-resolution data and feed it into AI models for more accurate decision-making.
+
+> **Main Goal:** How we can optimize energy consumption in crushing plant.
 
 ---
 
@@ -85,31 +108,31 @@ Traditional crushing and grinding equipment often operate under **suboptimal con
 ```
 IoT Sensors (Crusher + Mill)
         ↓
-   [📡 MQTT Publish]
+[📡 MQTT Publish]
         ↓
-   mining/crusher_01/metrics
+mining/crusher_01/metrics
         ↓
-   [Mosquitto Broker]
+[Mosquitto Broker]
         ↓
-   [consumer.py Bridge]   ← MQTT → HTTP with retry queue
+[consumer.py Bridge]  ← MQTT → HTTP with retry queue
         ↓
-   [FastAPI Backend]      ← POST /ingest
+[FastAPI Backend]  ← POST /ingest
         ↓
-   ┌────────────────┴────────────────┐
-   │                                  │
-[InfluxDB]                      [PostgreSQL]
-crusher_metrics (time-series)      sensor_stats (aggregates)
-        │                                  │
-        └────────────────┬─────────────────┘
-                         ↓
-                  [ML Service (AI)]
-           1. Ore Hardness Classifier (RF)
-           2. RPM Energy Optimizer (Regression)
-                         ↓
-                  [📡 MQTT Publish]
-           mining/crusher_01/speed_setpoint
-                         ↓
-                  (Crusher adjusts RPM)
+┌────────────────┴────────────────┐
+│                                 │
+[InfluxDB]                   [PostgreSQL]
+crusher_metrics (time-series)   sensor_stats (aggregates)
+│                                 │
+└────────────────┬────────────────┘
+                 ↓
+        [ML Service (AI)]
+  1. Ore Hardness Classifier (RF)
+  2. RPM Energy Optimizer (Regression)
+                 ↓
+[📡 MQTT Publish]
+mining/crusher_01/speed_setpoint
+                 ↓
+       (Crusher adjusts RPM)
 ```
 
 ### Architecture Breakdown
@@ -167,19 +190,19 @@ crusher_metrics (time-series)      sensor_stats (aggregates)
 
 ```bash
 Mine-Sarthi/
-├── data pipeline/          # Core ingestion & infrastructure
-│   ├── backend/            # FastAPI ingestion server
-│   ├── bridge/             # MQTT -> HTTP bridge logic (resilient)
-│   ├── gateway/            # Edge gateway configuration
-│   ├── mqtt_broker/        # Mosquitto configuration
-│   └── docker-compose.yml  # Orchestration script
-├── ml_service/             # AI Engine (Inference & Control)
-│   ├── api/                # Prediction & control endpoints
-│   ├── models/             # Trained .pkl models (Model 1 & 2)
-│   └── src/                # Business logic & control loops
-├── smart-ore-flow-main/    # Frontend React Application
-├── images/                 # Project documentation images
-└── README.md               # You are here
+├── data pipeline/              # Core ingestion & infrastructure
+│   ├── backend/                # FastAPI ingestion server
+│   ├── bridge/                 # MQTT -> HTTP bridge logic (resilient)
+│   ├── gateway/                # Edge gateway configuration
+│   ├── mqtt_broker/            # Mosquitto configuration
+│   └── docker-compose.yml      # Orchestration script
+├── ml_service/                 # AI Engine (Inference & Control)
+│   ├── api/                    # Prediction & control endpoints
+│   ├── models/                 # Trained .pkl models (Model 1 & 2)
+│   └── src/                    # Business logic & control loops
+├── smart-ore-flow-main/        # Frontend React Application
+├── images/                     # Project documentation images
+└── README.md                   # You are here
 ```
 
 ---
@@ -187,6 +210,7 @@ Mine-Sarthi/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Docker & Docker Compose installed
 - Python 3.10 or higher
 - Node.js (for frontend development)
@@ -194,12 +218,14 @@ Mine-Sarthi/
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/Vishalkumarjaiswal16/Mine-Sarthi.git
 cd Mine-Sarthi
 ```
 
 2. **Set up Environment Variables**
+
 Create a `.env` file in the `data pipeline/` directory based on the template.
 
 ### Running with Docker
@@ -223,12 +249,14 @@ This will start:
 ## 🤖 AI Models
 
 ### Model 1: Ore Hardness Classifier
+
 - **Algorithm:** Random Forest Classifier
 - **Inputs:** Power, RPM, Feed Rate, Feed Size, Vibration, Temperature, Current
 - **Output:** Ore class (SOFT, MEDIUM, HARD) with confidence %
 - **Purpose:** Identifies material characteristics in real-time to set optimization constraints.
 
 ### Model 2: RPM Energy Optimizer
+
 - **Algorithm:** Regression-based optimization
 - **Inputs:** Output of Model 1 + Live operational data
 - **Output:** Optimal RPM setpoint
@@ -250,6 +278,7 @@ This will start:
 ## 🤝 Contributing
 
 We welcome contributions to make mining more sustainable!
+
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
@@ -274,4 +303,5 @@ We welcome contributions to make mining more sustainable!
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
+
 Made with ❤️ for **Smart India Hackathon 2025**
