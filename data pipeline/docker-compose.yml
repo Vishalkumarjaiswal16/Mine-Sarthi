@@ -1,0 +1,76 @@
+version: '3.8'
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mqtt_broker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=mine_sarthi_realtime
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=adminpass
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mine_sarthi
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+
+  ml_service:
+    build:
+      context: ../ml_service
+      dockerfile: Dockerfile
+    container_name: ml_service
+    ports:
+      - "8001:8001"
+    environment:
+      - ML_SERVICE_HOST=0.0.0.0
+      - ML_SERVICE_PORT=8001
+      - BACKEND_URL=http://backend:8000
+      - INFLUX_HOST=influxdb
+      - INFLUX_PORT=8086
+      - INFLUX_DB=mine_sarthi_realtime
+      - INFLUX_USER=admin
+      - INFLUX_PASSWORD=adminpass
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=mine_sarthi
+      - PG_USER=postgres
+      - PG_PASSWORD=password
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+      - LOG_LEVEL=INFO
+      - STORE_PREDICTIONS=true
+    volumes:
+      - ../ml_service/models:/app/models:ro
+    depends_on:
+      - influxdb
+      - postgres
+      - mosquitto
+    restart: unless-stopped
+
+volumes:
+  influxdb_data:
+    driver: local
+  postgres_data:
+    driver: local
