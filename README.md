@@ -1,6 +1,3 @@
-<p align="center">
-  <img src="images/mine_sarthi_logo.png" alt="Mine Sarthi Logo" width="150"/>
-</p>
 
 # Mine Sarthi — The Charioteer of Sustainable Mining
 
