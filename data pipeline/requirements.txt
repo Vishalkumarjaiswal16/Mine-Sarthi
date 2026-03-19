@@ -1,5 +1,4 @@
 paho-mqtt>=1.6.1
-Flask>=2.0
 fastapi>=0.111.0
 uvicorn[standard]>=0.30.0
 requests>=2.28
