@@ -42,7 +42,7 @@
 
 ### SIH Problem Statement ID: **25210**
 **Problem Statement Title:** Efficient Energy use in Iron Ore Mining Operations
-**Theme:** Miscellaneous | **PS Category:** Software | **Team ID:** 97177 | **Team Name:** XEN!TH
+**Theme:** Miscellaneous | **PS Category:** Software | **Team ID:** 97177 | **Team Name:** @XEN!TH
 
 ---
 
