@@ -139,7 +139,7 @@ Against traditional mining baselines, Mine Sarthi delivers:
 
 ## 👥 Team XEN!TH (SIH 97177)
 - **Shivani Sharma** (Team Lead)
-- **Vishal Kumar** (AI & Data Pipeline)
+- **Vishal Kumar** (ML & Data Pipeline)
 - **Aditya Goyal**
 - **Akshat Kumar Arya**
 - **Himanshi Bishoi**
