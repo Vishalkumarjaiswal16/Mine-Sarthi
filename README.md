@@ -171,7 +171,7 @@ graph TD
 |:---|:---|
 | **Backend** | Python 3.10+, FastAPI |
 | **Machine Learning** | Scikit-learn, Random Forest, Regression |
-| **IIoT / Messaging** | MQTT Broker & Bridge, Mosquitto |
+| **IoT / Messaging** | MQTT Broker & Bridge, Mosquitto |
 | **Databases** | InfluxDB (Time-series), PostgreSQL (Relational) |
 | **Frontend** | React, Vite, Tailwind CSS, Lucide Icons |
 | **DevOps** | Docker, Docker Compose |
