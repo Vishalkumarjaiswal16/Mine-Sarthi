@@ -17,50 +17,21 @@
 
 ---
 
-## 🏗️ System Architecture
-
-> High-level architecture showing the complete data flow — from IoT sensors through MQTT ingestion, real-time AI inference, to autonomous speed control commands.
-
-### 🔄 Architecture Flow
-
-```mermaid
-graph TD
-    subgraph "Edge / IoT Layer"
-        A[IoT Sensors: Crusher & Mill] -->|MQTT Publish| B(Mosquitto Broker)
-        B -->|mining/crusher_01/metrics| C[consumer.py Bridge]
-    end
-
-    subgraph "Ingestion & Processing"
-        C -->|MQTT to HTTP Bridge| D[FastAPI Backend]
-        D -->|POST /ingest| E{Data Storage}
-        E -->|Time-series| F[(InfluxDB)]
-        E -->|Aggregates| G[(PostgreSQL)]
-    end
-
-    subgraph "AI Monitoring & Optimization"
-        D -->|Webhook Trigger| H[ML Service]
-        H -->|1. Ore Hardness Classifier| I[Model Inference]
-        H -->|2. RPM Energy Optimizer| I
-        I -->|Optimal Setpoint| J[Control Logic]
-    end
----
-
 ## 📋 Table of Contents
 - [Problem Statement](#-problem-statement)
 - [Overview](#-overview)
-- [System Architecture](#🏗️-system-architecture)
+- [System Architecture](#%EF%B8%8F-system-architecture)
 - [What You Will Learn](#-what-you-will-learn)
-- [What You'll Build](#🏗️-what-youll-build)
+- [What You'll Build](#%EF%B8%8F-what-youll-build)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Running with Docker](#running-with-docker)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Running with Docker](#running-with-docker)
 - [AI Models](#-ai-models)
 - [Key Features](#-key-features)
-- [API Endpoints](#-api-endpoints)
 - [Contributing](#-contributing)
 - [Team](#-team)
 - [License](#-license)
@@ -110,6 +81,71 @@ Traditional crushing and grinding equipment often operate under **suboptimal con
 
 ---
 
+## 🏗️ System Architecture
+
+> *High-level architecture showing the complete data flow — from IoT sensors through MQTT ingestion, real-time AI inference, to autonomous speed control commands.*
+
+### 🔄 Architecture Flow
+```mermaid
+graph TD
+    subgraph IOT["Edge / IoT Layer"]
+        A["IoT Sensors\nCrusher & Mill"] -->|"MQTT Publish\nmining/device_id/metrics"| B([Mosquitto Broker])
+    end
+
+    subgraph INGEST["Ingestion & Bridge"]
+        B --> C["consumer.py\nMQTT-to-HTTP Bridge\nwith retry queue"]
+        C -->|"POST /ingest"| D["FastAPI Backend"]
+    end
+
+    subgraph STORE["Data Storage"]
+        D -->|"Time-series\ncrusher_metrics"| F[(InfluxDB)]
+        D -->|"Aggregates\ncrusher_minute_stats"| G[(PostgreSQL)]
+    end
+
+    subgraph AI["AI Monitoring & Optimization"]
+        D -->|"Webhook if ML_SERVICE_ENABLED"| H["ML Service"]
+        H -->|"Model 1"| I["Ore Hardness Classifier\nRandom Forest"]
+        H -->|"Model 2"| J["RPM Energy Optimizer\nRegression"]
+        I --> K["Control Logic\n& Safety Interlocks"]
+        J --> K
+    end
+
+    subgraph CONTROL["Autonomous Control Loop"]
+        K -->|"MQTT Publish\nmining/device_id/speed_setpoint"| B
+        B -->|"RPM Command"| L["Crusher PLC\nAdjusts RPM"]
+        L -->|"Feedback"| A
+    end
+
+    subgraph UI["Frontend Display"]
+        M["React Dashboard\nAIMonitoring.tsx"]
+        M -->|"GET /timeseries/crusher_01"| D
+        M -->|"GET /ai-features/crusher_01"| D
+        M -->|"GET /control-status/crusher_01"| H
+    end
+```
+
+**MQTT Topics:**
+
+| Topic | Direction | Purpose |
+|:---|:---|:---|
+| `mining/device_id/metrics` | IoT → Broker | Sensor telemetry |
+| `mining/device_id/speed_setpoint` | ML Service → Broker | RPM commands to crusher |
+
+### Architecture Breakdown
+
+| Component | Location | Role | Technology |
+|:---|:---|:---|:---|
+| **IoT Publisher** | `data_pipeline/gateway/publisher_mqtt.py` | Simulates sensors, publishes to MQTT | Paho-MQTT |
+| **MQTT Broker** | Docker: `mosquitto` | Relays all MQTT messages | Mosquitto |
+| **Bridge** | `data_pipeline/bridge/consumer.py` | MQTT → HTTP to FastAPI ingest | Python, Requests |
+| **FastAPI Backend** | `data_pipeline/backend/fastapi_app.py` | Ingest, InfluxDB, PostgreSQL, ML webhook | FastAPI, Pydantic |
+| **InfluxDB** | Docker | Time-series storage (`crusher_metrics`) | InfluxDB 1.8 |
+| **PostgreSQL** | Docker | Aggregates (`crusher_minute_stats`, `sensor_minute_agg`) | PostgreSQL 15 |
+| **ML Service** | `ml_service/` | Model 1, Model 2, control loop, MQTT publish | Scikit-learn, FastAPI |
+| **Frontend** | `smart-ore-flow-main/` | AI Monitoring, displays sensor data, ore type, optimal RPM, control status | React, Vite, Tailwind |
+
+---
+
 ## 🎓 What You Will Learn
 - ✅ Architecting **Industrial IoT** pipelines for high-frequency data
 - ✅ Implementing **sequential AI workflows** (Classification → Regression)
@@ -147,19 +183,19 @@ Traditional crushing and grinding equipment often operate under **suboptimal con
 
 ```bash
 Mine-Sarthi/
-├── data pipeline/          # Core ingestion & infrastructure
-│   ├── backend/            # FastAPI ingestion server
-│   ├── bridge/             # MQTT -> HTTP bridge logic (resilient)
-│   ├── gateway/            # Edge gateway configuration
-│   ├── mqtt_broker/        # Mosquitto configuration
-│   └── docker-compose.yml  # Orchestration script
-├── ml_service/             # AI Engine (Inference & Control)
-│   ├── api/                # Prediction & control endpoints
-│   ├── models/             # Trained .pkl models (Model 1 & 2)
-│   └── src/                # Business logic & control loops
-├── smart-ore-flow-main/    # Frontend React Application
-├── images/                 # Project documentation images
-└── README.md               # You are here
+|-- data_pipeline/          # Core ingestion & infrastructure
+|   |-- backend/            # FastAPI ingestion server
+|   |-- bridge/             # MQTT -> HTTP bridge (resilient, consumer.py)
+|   |-- gateway/            # IoT publisher (publisher_mqtt.py)
+|   |-- mqtt_broker/        # Mosquitto configuration
+|   `-- docker-compose.yml  # Orchestration script
+|-- ml_service/             # AI Engine (Inference & Control)
+|   |-- api/                # Prediction & control endpoints
+|   |-- models/             # Trained .pkl models (Model 1 & 2)
+|   `-- src/                # SpeedControlService & business logic
+|-- smart-ore-flow-main/    # Frontend React Application
+|-- images/                 # Project documentation images
+`-- README.md               # You are here
 ```
 
 ---
@@ -179,14 +215,21 @@ cd Mine-Sarthi
 ```
 
 2. **Set up Environment Variables**
-Create a `.env` file in the `data pipeline/` directory based on the template.
+Create a `.env` file in the `data_pipeline/` directory based on the template.
 
 ### Running with Docker
 The easiest way to run the full stack is using Docker Compose:
 ```bash
-cd "data pipeline"
+cd "data_pipeline"
 docker-compose up --build
 ```
+
+This will start:
+- Mosquitto Broker (1883)
+- InfluxDB (8086)
+- PostgreSQL (5432)
+- FastAPI Backend (8000)
+- ML Service (8001)
 
 ---
 
@@ -243,30 +286,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 Made with ❤️ for **Smart India Hackathon 2025**
-
-    subgraph "Control Loop"
-        J -->|MQTT Publish| K(Mosquitto Broker)
-        K -->|mining/crusher_01/speed_setpoint| L[Crusher PLC]
-        L -->|Adjust RPM| A
-    end
-
-    subgraph "User Interface"
-        M[React Dashboard] -->|GET /timeseries| D
-        M -->|GET /control-status| H
-        M -->|Digital Twin| M
-    end
-```
-
-### Architecture Breakdown
-
-| Component | Responsibility | Technology |
-|:---|:---|:---|
-| **IoT Layer** | Data telemetry generation (Python Publisher) | Paho-MQTT, Mosquitto |
-| **Messaging Broker** | Central hub for MQTT messages | Mosquitto (Docker) |
-| **Ingestion Bridge** | Resilient MQTT-to-HTTP relay with buffering | consumer.py, deque |
-| **Data Backend** | Core API, ingestion management & webhooks | FastAPI, Pydantic |
-| **Storage (RT)** | High-frequency time-series (crusher_metrics) | InfluxDB 1.8 |
-| **Storage (Agg)** | Long-term aggregates (crusher_minute_stats) | PostgreSQL 15 |
-| **ML Service** | Real-time predictions & autonomous control | Scikit-learn, FastAPI |
-| **Control Service** | Sequential speed optimization loop | Python (SpeedControlService) |
-| **Frontend UI** | Real-time monitoring & AI insights | React, Vite, Tailwind |
