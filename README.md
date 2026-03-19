@@ -6,7 +6,6 @@
   <img src="https://img.shields.io/badge/React-Dashboard-61DAFB?logo=react" alt="React">
   <img src="https://img.shields.io/badge/MQTT-Real--time-660066?logo=mqtt" alt="MQTT">
   <img src="https://img.shields.io/badge/InfluxDB-Timeseries-22ADF6?logo=influxdb" alt="InfluxDB">
-  <img src="https://img.shields.io/badge/AI-Optimization-Integrated-orange" alt="AI">
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
 </p>
 
