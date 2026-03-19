@@ -169,4 +169,4 @@ Against traditional mining baselines, **Mine Sarthi** delivers:
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-Made with ❤️ by [Team XEN!TH](https://github.com/Vishalkumarjaiswal16)
+Made with ❤️ by [Team @XEN!TH](https://github.com/Vishalkumarjaiswal16)
