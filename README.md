@@ -1,14 +1,16 @@
-# 🚜 Mine Sarthi — The Charioteer of Sustainable Mining
+# ⛏️ Mine Sarthi — The Charioteer of Sustainable Mining
 
 <p align="center">
-<img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
-<img src="https://img.shields.io/badge/FastAPI-Powered-009688?logo=fastapi" alt="FastAPI">
-<img src="https://img.shields.io/badge/React-Dashboard-61DAFB?logo=react" alt="React">
-<img src="https://img.shields.io/badge/AI--Optimization-Integrated-orange" alt="AI">
-<img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-Powered-009688?logo=fastapi" alt="FastAPI">
+  <img src="https://img.shields.io/badge/React-Dashboard-61DAFB?logo=react" alt="React">
+  <img src="https://img.shields.io/badge/MQTT-Real--time-660066?logo=mqtt" alt="MQTT">
+  <img src="https://img.shields.io/badge/InfluxDB-Timeseries-22ADF6?logo=influxdb" alt="InfluxDB">
+  <img src="https://img.shields.io/badge/AI-Optimization-Integrated-orange" alt="AI">
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
 </p>
 
-> **Mine Sarthi** is a comprehensive, AI-powered industrial IoT ecosystem designed to optimize energy usage in iron ore mining comminution (crushing and grinding) operations. Built for the **Smart India Hackathon (SIH) 2025**, it transforms traditional mining workflows into intelligent, autonomous, and sustainable operations.
+> A comprehensive, **AI-powered industrial IoT ecosystem** designed to optimize energy usage in iron ore mining comminution (crushing and grinding) operations. Built for the **Smart India Hackathon (SIH) 2025** (**PS ID: 25210**), Mine Sarthi transforms traditional mining workflows into intelligent, autonomous, and sustainable operations.
 
 <p align="center">
   <img src="images/Screenshot-2026-03-19-181353.jpg" alt="Mine Sarthi AI Monitoring Dashboard" width="800"/>
@@ -18,100 +20,166 @@
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [System Architecture](#system-architecture)
-- [AI Models & Predictions](#ai-models--predictions)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Impact & Results](#impact--results)
-- [Team Details](#team-details)
-- [License](#license)
+- [Problem Statement](#-problem-statement)
+- [Overview](#-overview)
+- [System Architecture](#%EF%B8%8F-system-architecture)
+- [What You Will Learn](#-what-you-will-learn)
+- [What You'll Build](#%EF%B8%8F-what-youll-build)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Running with Docker](#running-with-docker)
+- [AI Models](#-ai-models)
+- [Key Features](#-key-features)
+- [API Endpoints](#-api-endpoints)
+- [Contributing](#-contributing)
+- [Team](#-team)
+- [License](#-license)
+
+---
+
+## 🎯 Problem Statement
+
+### SIH Problem Statement ID: **25210**
+**Title:** Efficient Energy Use in Iron Ore Mining Operations
+
+**Background:**
+In mining operations, the processes of **crushing and grinding** (collectively known as **comminution**) are essential for liberating valuable minerals from the surrounding rock. However, these processes are among the **most energy-intensive stages** in mineral processing, often accounting for up to **50% of a mine's total energy consumption**. The inefficiencies in these systems not only lead to **elevated operational costs** but also contribute significantly to the **environmental footprint** of mining activities.
+
+**The Challenge:**
+Traditional crushing and grinding equipment often operate under **suboptimal conditions** due to static control systems, wear and tear, and lack of real-time adaptability. This results in:
+- ⚠️ **Excessive energy usage**
+- 📉 **Reduced throughput**
+- 💰 **Increased maintenance costs**
+- 🌍 **Higher carbon emissions**
 
 ---
 
 ## 🧾 Overview
 
-Iron ore mining is one of the most energy-intensive industries globally. In traditional mines, crushers and mills often run at fixed speeds regardless of the material characteristics, leading to massive energy waste and premature equipment wear. **Mine Sarthi** solves this by:
+**Mine Sarthi** is a full-stack, production-ready platform that addresses the SIH problem statement through:
 
-- **Real-time Monitoring:** Ingesting live sensor telemetry via MQTT for sub-second situational awareness.
-- **AI-Driven Classification:** Categorizing ore hardness (Soft/Medium/Hard) using Machine Learning.
-- **Autonomous Optimization:** Dynamically adjusting crusher RPM to match the ore type, reducing energy-per-ton.
-- **Digital Twin:** Providing a SCADA-grade visualization for process simulation and control.
+✅ **Real-Time Monitoring** — IoT sensors continuously collect 9+ operational parameters (power, RPM, feed rate, temperature, vibration, ore hardness, etc.)
+
+✅ **AI-Driven Optimization** — Two machine learning models work sequentially:
+- **Model 1:** Ore Hardness Classifier (Random Forest) → Classifies ore into SOFT / MEDIUM / HARD
+- **Model 2:** RPM Energy Optimizer → Recommends optimal crusher speed to minimize energy per ton
+
+✅ **Autonomous Control** — MQTT-based closed-loop system adjusts crusher RPM automatically based on AI predictions
+
+✅ **Energy Savings** — Demonstrated **8-15% reduction in energy consumption** vs baseline operations
+
+✅ **Complete Stack** — Data pipeline (MQTT → InfluxDB → PostgreSQL), ML service (FastAPI + Scikit-learn), and modern web dashboard (React)
 
 ---
 
 ## 🏗️ System Architecture
 
+> *High-level architecture showing the complete data flow — from IoT sensors through MQTT ingestion, real-time AI inference, to autonomous speed control commands.*
+
 ### 🔄 Architecture Flow
 
 ```
-IoT Sensors (MQTT) ──▶ Data Bridge (FastAPI) ──▶ Dual-DB Storage (InfluxDB/Postgres)
-                               │
-                               ▼
-                        AI Prediction Engine ◀─── ML Service (Scikit-Learn)
-                               │
-                               ▼
-                        React Dashboard ◀──────── API Layer (Real-time Updates)
+IoT Sensors (Crusher + Mill)
+        ↓
+   [📡 MQTT Publish]
+        ↓
+   mining/crusher_01/metrics
+        ↓
+   [Mosquitto Broker]
+        ↓
+   [consumer.py Bridge]   ← MQTT → HTTP with retry queue
+        ↓
+   [FastAPI Backend]      ← POST /ingest
+        ↓
+   ┌────────────────┴────────────────┐
+   │                                  │
+[InfluxDB]                      [PostgreSQL]
+crusher_metrics (time-series)      sensor_stats (aggregates)
+        │                                  │
+        └────────────────┬─────────────────┘
+                         ↓
+                  [ML Service (AI)]
+           1. Ore Hardness Classifier (RF)
+           2. RPM Energy Optimizer (Regression)
+                         ↓
+                  [📡 MQTT Publish]
+           mining/crusher_01/speed_setpoint
+                         ↓
+                  (Crusher adjusts RPM)
 ```
 
 ### Architecture Breakdown
 
-| Component | Technology | Description |
-|-----------|------------|-------------|
-| **Data Pipeline** | MQTT + FastAPI | Reliable ingestion and routing of live sensor data. |
-| **Storage** | InfluxDB & Postgres | Hybrid storage for real-time telemetry and analytical reports. |
-| **AI Engine** | Scikit-learn | Dual-model pipeline for hardness classification and RPM optimization. |
-| **Frontend** | React + TypeScript | Modern dashboard with Digital Twin and AI monitoring features. |
+| Component | Responsibility | Technology |
+|:---|:---|:---|
+| **IoT Layer** | Real-time sensor data generation and publishing | MQTT, Mosquitto |
+| **Ingestion Bridge** | Resilient MQTT-to-HTTP relay with buffering | Python, Paho-MQTT, Deque |
+| **Data Backend** | High-frequency ingestion, normalization, and API hosting | FastAPI, Pydantic |
+| **Storage (RT)** | High-resolution time-series data storage | InfluxDB 1.8 |
+| **Storage (Agg)** | Long-term minute aggregates and KPI storage | PostgreSQL 15 |
+| **ML Engine** | Sequential AI pipeline for classification and optimization | Scikit-learn, FastAPI |
+| **Control Loop** | Autonomous MQTT command publishing back to edge | MQTT, Mosquitto |
+| **Frontend UI** | Real-time monitoring dashboard and digital twin | React, Tailwind CSS |
 
 ---
 
-## 🧠 AI Models & Predictions
+## 🎓 What You Will Learn
 
-The core of **Mine Sarthi** consists of two sophisticated models designed to work in tandem for maximum efficiency.
-
-### 1. Ore Hardness Prediction
-Categorizes the incoming ore based on power consumption, vibration, and feed rate telemetry.
-
-### 2. Optimal RPM Recommendation
-Suggests the most energy-efficient speed for the crusher based on the predicted hardness and feed size.
-
-<p align="center">
-  <img src="images/Screenshot-2026-03-19-181419.jpg" alt="Model Prediction Results" width="800"/>
-</p>
+- ✅ Architecting **Industrial IoT (IIoT)** pipelines for high-frequency data
+- ✅ Implementing **sequential AI workflows** (Classification → Regression)
+- ✅ Building **production-grade bridges** between different protocols (MQTT & HTTP)
+- ✅ Working with **hybrid database strategies** (Time-series + Relational)
+- ✅ Creating **autonomous closed-loop systems** for industrial automation
+- ✅ Developing **Digital Twins** for process visualization and simulation
+- ✅ Optimizing **energy efficiency** in heavy industrial processes using ML
 
 ---
 
-## ✨ Key Features
+## 🛠️ What You'll Build
 
-- 🚦 **Closed-Loop Control** — Autonomous RPM adjustments published back to hardware.
-- 📉 **Energy Analytics** — Track energy-per-ton metrics in real-time.
-- 👯 **Digital Twin** — 3D/2D visualization of the mining process chain.
-- 🔋 **Renewable Integration** — Manage solar generation and battery storage mix.
-- 🔒 **Industrial Grade** — Robust error handling and data persistence.
+- A live **Energy Optimization Platform** for mining operations
+- A **bidirectional data pipeline** handling thousands of metrics per second
+- An **AI-powered speed control service** that operates autonomously
+- A **React-based command center** with real-time analytics and alerts
+- A **Dockerized microservices architecture** ready for cloud deployment
 
 ---
 
 ## 🧰 Tech Stack
 
-- **Backend:** Python 3.10+, FastAPI, MQTT (Mosquitto)
-- **Database:** InfluxDB (Time-series), PostgreSQL (Relational)
-- **Machine Learning:** Scikit-learn, Random Forest, Joblib
-- **Frontend:** React.js, TypeScript, Tailwind CSS, Shadcn/UI
-- **DevOps:** Docker, Docker Compose, Nginx
+| Category | Technology |
+|:---|:---|
+| **Backend** | Python 3.10+, FastAPI |
+| **Machine Learning** | Scikit-learn, Random Forest, Regression, Pickle |
+| **IIoT / Messaging** | MQTT, Mosquitto, Paho-MQTT |
+| **Databases** | InfluxDB (Time-series), PostgreSQL (Relational) |
+| **Frontend** | React, Vite, Tailwind CSS, Lucide Icons |
+| **DevOps** | Docker, Docker Compose |
+| **Others** | Pydantic, Dotenv, Requests, Asyncio |
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```bash
 Mine-Sarthi/
-├── data pipeline/          # MQTT bridge, Ingestion API & Gateway
-├── ml_service/             # AI optimization engine & trained models
-├── smart-ore-flow-main/    # React + TypeScript web dashboard
-├── images/                 # Documentation assets (Screenshots/Diagrams)
-└── docker-compose.yml      # Orchestration for the entire ecosystem
+├── data pipeline/          # Core ingestion & infrastructure
+│   ├── backend/            # FastAPI ingestion server
+│   ├── bridge/             # MQTT -> HTTP bridge logic (resilient)
+│   ├── gateway/            # Edge gateway configuration
+│   ├── mqtt_broker/        # Mosquitto configuration
+│   └── docker-compose.yml  # Orchestration script
+├── ml_service/             # AI Engine (Inference & Control)
+│   ├── api/                # Prediction & control endpoints
+│   ├── models/             # Trained .pkl models (Model 1 & 2)
+│   └── src/                # Business logic & control loops
+├── smart-ore-flow-main/    # Frontend React Application
+├── images/                 # Project documentation images
+└── README.md               # You are here
 ```
 
 ---
@@ -119,44 +187,81 @@ Mine-Sarthi/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Docker & Docker Compose
-- Python 3.10+ (for local development)
+- Docker & Docker Compose installed
+- Python 3.10 or higher
+- Node.js (for frontend development)
 
-### Installation & Run
+### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Vishalkumarjaiswal16/Mine-Sarthi.git
-   cd Mine-Sarthi
-   ```
+1. **Clone the repository**
+```bash
+git clone https://github.com/Vishalkumarjaiswal16/Mine-Sarthi.git
+cd Mine-Sarthi
+```
 
-2. **Start the ecosystem:**
-   ```bash
-   docker-compose up --build
-   ```
+2. **Set up Environment Variables**
+Create a `.env` file in the `data pipeline/` directory based on the template.
 
-3. **Access the services:**
-   - **Dashboard:** `http://localhost:3000`
-   - **Backend API:** `http://localhost:8000/docs`
-   - **ML Service:** `http://localhost:8001/docs`
+### Running with Docker
+
+The easiest way to run the full stack is using Docker Compose:
+
+```bash
+cd "data pipeline"
+docker-compose up --build
+```
+
+This will start:
+- Mosquitto Broker (1883)
+- InfluxDB (8086)
+- PostgreSQL (5432)
+- FastAPI Backend (8000)
+- ML Service (8001)
 
 ---
 
-## 📉 Impact & Results
+## 🤖 AI Models
 
-Against traditional mining baselines, **Mine Sarthi** delivers:
+### Model 1: Ore Hardness Classifier
+- **Algorithm:** Random Forest Classifier
+- **Inputs:** Power, RPM, Feed Rate, Feed Size, Vibration, Temperature, Current
+- **Output:** Ore class (SOFT, MEDIUM, HARD) with confidence %
+- **Purpose:** Identifies material characteristics in real-time to set optimization constraints.
 
-- **Energy Consumption:** ↓ 14% reduction
-- **Operational Efficiency:** ↑ 8% increase
-- **Renewable Energy Mix:** 78% sustainable usage
-- **Recovery Rate:** 95.2% Overall Recovery
+### Model 2: RPM Energy Optimizer
+- **Algorithm:** Regression-based optimization
+- **Inputs:** Output of Model 1 + Live operational data
+- **Output:** Optimal RPM setpoint
+- **Purpose:** Minimizes `kWh/ton` processed by matching machine speed to ore hardness.
 
 ---
 
-## 👥 Team @XEN!TH (SIH 97177)
+## ✨ Key Features
 
-- **Shivani Sharma** (Team Lead)
-- **Vishal Kumar** 
+- ⚡ **Real-time Speed Control** — Autonomous adjustment of crusher RPM via AI.
+- 🔄 **Digital Twin** — Visual process flow simulation for operational planning.
+- 📊 **Energy Usage Analytics** — Granular breakdown of consumption by equipment.
+- ☀️ **Renewable Integration** — Dashboard for solar and battery storage management.
+- ⚠️ **Smart Alerting** — Threshold-based notifications for machine health.
+- 🛡️ **Safety Interlocks** — Logic-based overrides to prevent unsafe machine states.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions to make mining more sustainable!
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 👥 Team — XEN!TH
+
+- **Vishal Kumar** — Lead Developer (AI & Data Pipeline)
+- **Shivani Sharma** — Team Lead
 - **Aditya Goyal**
 - **Akshat Kumar Arya**
 - **Himanshi Bishoi**
@@ -169,4 +274,4 @@ Against traditional mining baselines, **Mine Sarthi** delivers:
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-Made with ❤️ by [Team @XEN!TH](https://github.com/Vishalkumarjaiswal16)
+Made with ❤️ for **Smart India Hackathon 2025**
