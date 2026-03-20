@@ -151,9 +151,7 @@ graph TD
 - ✅ Implementing **sequential AI workflows** (Classification → Regression)
 - ✅ Building **production-grade bridges** between different protocols (MQTT & HTTP)
 - ✅ Working with **hybrid database strategies** (Time-series + Relational)
-- ✅ Creating **autonomous closed-loop systems** for industrial automation
 - ✅ Developing **Digital Twins** for process visualization and simulation
-- ✅ Optimizing **energy efficiency** in heavy industrial processes using ML
 
 ---
 
