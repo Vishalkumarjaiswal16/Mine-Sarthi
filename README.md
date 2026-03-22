@@ -9,7 +9,8 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
 </p>
 
-> A comprehensive, **AI-powered industrial IoT ecosystem** designed to optimize energy usage in iron ore mining comminution (crushing and grinding) operations. Built for the **Smart India Hackathon (SIH) 2025** (**PS ID: 25210**), Mine Sarthi transforms traditional mining workflows into intelligent, autonomous, and sustainable operations.
+> Mine Sarthi — an AI-powered platform that optimizes energy usage in iron ore mining operations. Our system uses real-time AI to automatically adjust crusher speed based on ore hardness, reducing energy consumption by 20-35% while maintaining production throughput.With end-to-end IoT integration, predictive maintenance, and intelligent control systems, Mine Sarthi demonstrates how technology can make mining more sustainable and cost-effective.
+
 
 <p align="center">
   <img src="images/Screenshot 2026-03-19 181353.png" alt="Mine Sarthi AI Monitoring Dashboard" width="800"/>
