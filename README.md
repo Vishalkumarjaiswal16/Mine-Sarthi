@@ -272,7 +272,7 @@ We welcome contributions to make mining more sustainable!
 - **[Vishal Kumar](https://github.com/Vishalkumarjaiswal16)** 
 - **[Shivani Sharma](https://github.com/shivxnii)**  — Team Lead
 - **Aditya Goyal**
-- **Akshat Kumar Arya**
+- **[Akshat Kumar Arya](https://github.com/Akshat-D-Arya)**
 - **Himanshi Bishoi**
 - **Aditya Naruka**
 
