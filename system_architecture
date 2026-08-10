@@ -1,0 +1,147 @@
+# Setup All 5 Mine Sarthi Services — Dependency Installation & Launch
+
+## Architecture Overview
+
+The project is a full-stack IoT data pipeline:
+
+```mermaid
+graph LR
+  A["Service 1: publisher_mqtt.py<br/>(IoT Simulator)"] -->|MQTT| B["Docker: Mosquitto<br/>(MQTT Broker :1883)"]
+  B -->|MQTT| C["Service 3: consumer.py<br/>(MQTT→HTTP Bridge)"]
+  C -->|HTTP POST| D["Service 2: fastapi_app.py<br/>(FastAPI Backend :8000)"]
+  D -->|Write| E["Docker: InfluxDB :8086"]
+  D -->|Write| F["Docker: PostgreSQL :5432"]
+  G["Service 4: ML Service :8001"] -->|Read| E
+  G -->|Read| F
+  H["Service 5: Frontend :8080"] -->|WebSocket/API| D
+  H -->|API| G
+```
+
+## Pre-requisite: Docker Infrastructure
+
+The MQTT broker error (`WinError 10061 - Connection refused`) occurs because **Mosquitto, InfluxDB, and PostgreSQL** are not running. These are defined in [docker-compose.yml](file:///d:/Desktop/sih%202025/data%20pipeline/docker-compose.yml) and must be started first.
+
+> [!IMPORTANT]
+> Docker Desktop must be **running** before we start. All 3 infrastructure services (Mosquitto, InfluxDB, PostgreSQL) will be spun up via `docker compose up -d`.
+
+## Proposed Changes
+
+### Step 1 — Start Docker Infrastructure
+```bash
+# From: d:\Desktop\sih 2025\data pipeline
+docker compose up -d
+```
+This starts:
+- **Mosquitto** (MQTT broker on `:1883`) — fixes the `WinError 10061`
+- **InfluxDB** (time-series DB on `:8086`)
+- **PostgreSQL** (relational DB on `:5432`, with [init.sql](file:///d:/Desktop/sih%202025/data%20pipeline/postgres/init.sql))
+
+---
+
+### Step 2 — Service 1: publisher_mqtt.py (IoT Gateway Simulator)
+
+**Location**: [data pipeline/gateway/](file:///d:/Desktop/sih%202025/data%20pipeline/gateway)
+**Dependencies**: `paho-mqtt`, `python-dotenv`
+
+```bash
+# From: d:\Desktop\sih 2025\data pipeline\gateway
+uv venv   # (already done)
+uv pip install paho-mqtt python-dotenv
+uv run publisher_mqtt.py --device crusher_01
+```
+
+> Already set up in previous step. Just needs the MQTT broker (Step 1) running.
+
+---
+
+### Step 3 — Service 2: fastapi_app.py (FastAPI Backend)
+
+**Location**: [data pipeline/backend/](file:///d:/Desktop/sih%202025/data%20pipeline/backend)
+**Dependencies from** [requirements.txt](file:///d:/Desktop/sih%202025/data%20pipeline/requirements.txt):
+`paho-mqtt`, `fastapi`, `uvicorn`, `requests`, `influxdb`, `psycopg2-binary`, `pydantic`, `pandas`, `python-dotenv`, `APScheduler`
+
+```bash
+# From: d:\Desktop\sih 2025\data pipeline\backend
+uv venv
+uv pip install -r ../requirements.txt
+uv run -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+### Step 4 — Service 3: consumer.py (MQTT→HTTP Bridge)
+
+**Location**: [data pipeline/bridge/](file:///d:/Desktop/sih%202025/data%20pipeline/bridge)
+**Dependencies**: `paho-mqtt`, `requests`, `python-dotenv`
+
+```bash
+# From: d:\Desktop\sih 2025\data pipeline\bridge
+uv venv
+uv pip install paho-mqtt requests python-dotenv
+uv run consumer.py
+```
+
+---
+
+### Step 5 — Service 4: ML Service (FastAPI on port 8001)
+
+**Location**: [ml_service/](file:///d:/Desktop/sih%202025/ml_service)
+**Dependencies from** [requirements.txt](file:///d:/Desktop/sih%202025/ml_service/requirements.txt):
+`fastapi`, `uvicorn`, `pydantic`, `scikit-learn`, `joblib`, `numpy`, `scipy`, `python-dotenv`, `requests`, `paho-mqtt`, `influxdb`, `psycopg2-binary`, `python-json-logger`
+
+```bash
+# From: d:\Desktop\sih 2025\ml_service
+uv venv
+uv pip install -r requirements.txt
+uv run -m uvicorn api.main:app --port 8001
+```
+
+---
+
+### Step 6 — Service 5: Frontend (Vite + React)
+
+**Location**: [smart-ore-flow-main/smart-ore-flow-main/](file:///d:/Desktop/sih%202025/smart-ore-flow-main/smart-ore-flow-main)
+**Dependencies**: Node.js packages from [package.json](file:///d:/Desktop/sih%202025/smart-ore-flow-main/smart-ore-flow-main/package.json)
+
+```bash
+# From: d:\Desktop\sih 2025\smart-ore-flow-main\smart-ore-flow-main
+npm install
+npm run dev
+```
+
+> `node_modules` already exists, so `npm install` will just verify/update.
+
+---
+
+## Execution Order
+
+The services must be started in this order due to dependencies:
+
+| Order | Service | Port | Depends On |
+|-------|---------|------|------------|
+| 0 | Docker (Mosquitto, InfluxDB, Postgres) | 1883, 8086, 5432 | Docker Desktop |
+| 1 | Service 2: FastAPI Backend | 8000 | InfluxDB, Postgres |
+| 2 | Service 3: Consumer (MQTT Bridge) | — | Mosquitto, FastAPI |
+| 3 | Service 1: Publisher (IoT Sim) | — | Mosquitto |
+| 4 | Service 4: ML Service | 8001 | InfluxDB, Postgres |
+| 5 | Service 5: Frontend | 8080 | FastAPI, ML Service |
+
+## Open Questions
+
+> [!IMPORTANT]
+> **Docker Desktop**: Is Docker Desktop currently running? The `docker --version` check passed, but we need the Docker engine active to run `docker compose up`.
+
+> [!NOTE]
+> Each Python service will get its own isolated `uv` virtual environment (`uv venv` + `uv pip install`) so there are no cross-contamination issues between services.
+
+## Verification Plan
+
+### Automated Tests
+- `docker ps` — verify all 3 containers (mosquitto, influxdb, postgres) are running
+- Each Python service will print startup logs confirming connection
+
+### Manual Verification
+- Service 1 should print sensor data messages once Mosquitto is up
+- Service 2 should be accessible at `http://localhost:8000/docs`
+- Service 4 should be accessible at `http://localhost:8001/docs`
+- Service 5 should be accessible at `http://localhost:8080`
