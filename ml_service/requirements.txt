@@ -1,5 +1,4 @@
 # ML Service Requirements
-# Python 3.9+
 
 # Web Framework
 fastapi>=0.111.0
