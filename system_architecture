@@ -125,23 +125,3 @@ The services must be started in this order due to dependencies:
 | 3 | Service 1: Publisher (IoT Sim) | — | Mosquitto |
 | 4 | Service 4: ML Service | 8001 | InfluxDB, Postgres |
 | 5 | Service 5: Frontend | 8080 | FastAPI, ML Service |
-
-## Open Questions
-
-> [!IMPORTANT]
-> **Docker Desktop**: Is Docker Desktop currently running? The `docker --version` check passed, but we need the Docker engine active to run `docker compose up`.
-
-> [!NOTE]
-> Each Python service will get its own isolated `uv` virtual environment (`uv venv` + `uv pip install`) so there are no cross-contamination issues between services.
-
-## Verification Plan
-
-### Automated Tests
-- `docker ps` — verify all 3 containers (mosquitto, influxdb, postgres) are running
-- Each Python service will print startup logs confirming connection
-
-### Manual Verification
-- Service 1 should print sensor data messages once Mosquitto is up
-- Service 2 should be accessible at `http://localhost:8000/docs`
-- Service 4 should be accessible at `http://localhost:8001/docs`
-- Service 5 should be accessible at `http://localhost:8080`
