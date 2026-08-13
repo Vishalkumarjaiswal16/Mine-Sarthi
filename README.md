@@ -1,4 +1,4 @@
-# Mine Sarthi — The Charioteer of Sustainable Mining
+# Mine Sarthi — The Charioteer of Sustainable Mining 
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
