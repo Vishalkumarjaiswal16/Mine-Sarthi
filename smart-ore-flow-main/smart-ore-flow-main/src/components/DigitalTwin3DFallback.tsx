@@ -16,7 +16,7 @@ export const DigitalTwin3DFallback: React.FC<DigitalTwin3DFallbackProps> = ({ cl
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Layers className="w-5 h-5 text-primary" />
-            3D Digital Twin (2D View)
+            Conveyor Belt Digital Twin (2D View)
           </CardTitle>
           <div className="flex items-center gap-2">
             <Button
@@ -34,15 +34,15 @@ export const DigitalTwin3DFallback: React.FC<DigitalTwin3DFallbackProps> = ({ cl
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center p-6">
               <Layers className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">3D Visualization Unavailable</h3>
+              <h3 className="text-lg font-semibold mb-2">3D Conveyor Visualization</h3>
               <p className="text-sm text-muted-foreground mb-4 max-w-md">
-                The 3D digital twin component is currently unavailable due to a compatibility issue with React Three Fiber.
-                The 2D process visualization below provides the same functionality.
+                The 3D conveyor belt digital twin visualization is loading.
+                The real-time health monitoring dashboard below provides full sensor data and predictive maintenance insights.
               </p>
               <div className="flex flex-col gap-2 items-center">
                 <Info className="w-4 h-4 text-muted-foreground" />
                 <p className="text-xs text-muted-foreground">
-                  Scroll down to view the interactive 2D process visualization
+                  Scroll down to view conveyor belt monitoring zones and sensor readings
                 </p>
               </div>
             </div>

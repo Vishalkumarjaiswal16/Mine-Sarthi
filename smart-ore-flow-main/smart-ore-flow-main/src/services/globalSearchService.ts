@@ -28,10 +28,10 @@ const searchIndex: SearchResult[] = [
   {
     id: 'digital-twin',
     title: 'Digital Twin',
-    description: 'Digital Twin Control System - 3D visualization of mining operations and equipment',
+    description: 'Conveyor Belt Digital Twin — Health Monitoring & Predictive Maintenance for Iron Ore Mining',
     type: 'page',
     path: '/digital-twin',
-    keywords: ['digital twin', '3d', 'visualization', 'operations', 'equipment', 'mining', 'process', 'control system', 'simulation'],
+    keywords: ['digital twin', 'conveyor', 'belt', 'splice', 'joint', 'rupture', 'predictive maintenance', 'health monitoring', 'IoT', 'sensors', 'vibration', 'temperature', 'tension', 'tracking', 'misalignment', 'simulation', 'NMDC'],
     category: 'Main Pages'
   },
   {
